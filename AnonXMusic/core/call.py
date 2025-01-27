@@ -14,6 +14,7 @@ from ntgcalls import TelegramServerError
 from pytgcalls.types import (
     GroupCallParticipant,
     MediaStream,
+    ChatUpdate, 
     Update,
 )
 from pytgcalls.types import (
