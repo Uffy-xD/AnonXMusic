@@ -614,11 +614,11 @@ class Call(PyTgCalls):
         async def stream_services_handler(_, chat_id: int):
             return await self.stop_stream(chat_id)
 
-        @self.one.on_stream_end()
-        @self.two.on_stream_end()
-        @self.three.on_stream_end()
-        @self.four.on_stream_end()
-        @self.five.on_stream_end()
+        @self.on_update(filters.stream_end)
+        @self.on_update(filters.stream_end)
+        @self.on_update(filters.stream_end)
+        @self.on_update(filters.stream_end)
+        @self.on_update(filters.stream_end)
         async def stream_end_handler(client, update: Update):
             if not isinstance(update, StreamAudioEnded):
                 return
