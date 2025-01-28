@@ -563,8 +563,8 @@ class Call(PyTgCalls):
                     db[chat_id][0]["mystic"] = run
                     db[chat_id][0]["markup"] = "stream"
 
-     async def ping(self):
-         pings = []
+    async def ping(self):
+        pings = []
          if config.STRING1:
              pings.append(self.one.ping)  # No 'await' needed here
          if config.STRING2:
