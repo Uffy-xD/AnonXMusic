@@ -565,20 +565,20 @@ class Call(PyTgCalls):
 
     async def ping(self):
         pings = []
-         if config.STRING1:
-             pings.append(self.one.ping)  # No 'await' needed here
-         if config.STRING2:
-             pings.append(self.two.ping)  # No 'await' needed here
-         if config.STRING3:
-             pings.append(self.three.ping)  # No 'await' needed here
-         if config.STRING4:
-             pings.append(self.four.ping)  # No 'await' needed here
-         if config.STRING5:
-             pings.append(self.five.ping)  # No 'await' needed here
+        
+        if config.STRING1:
+            pings.append(self.one.ping)  # No 'await' needed here
+        if config.STRING2:
+            pings.append(self.two.ping)  # No 'await' needed here
+        if config.STRING3:
+            pings.append(self.three.ping)  # No 'await' needed here
+        if config.STRING4:
+            pings.append(self.four.ping)  # No 'await' needed here
+        if config.STRING5:
+            pings.append(self.five.ping)  # No 'await' needed here
 
-         # Ensure this return statement is correctly indented inside the async function
-         return str(round(sum(pings) / len(pings), 3))
-
+        # The return statement should be properly indented within the async function
+        return str(round(sum(pings) / len(pings), 3))
     async def start(self):
         LOGGER(__name__).info("Starting PyTgCalls Client...\n")
         if config.STRING1:
