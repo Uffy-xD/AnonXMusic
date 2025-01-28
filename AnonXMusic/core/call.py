@@ -565,20 +565,19 @@ class Call(PyTgCalls):
 
     async def ping(self):
         pings = []
-        
         if config.STRING1:
-            pings.append(self.one.ping)  # No 'await' needed here
+            pings.append(self.one.ping)
         if config.STRING2:
-            pings.append(self.two.ping)  # No 'await' needed here
+            pings.append(self.two.ping)
         if config.STRING3:
-            pings.append(self.three.ping)  # No 'await' needed here
+            pings.append(self.three.ping)
         if config.STRING4:
-            pings.append(self.four.ping)  # No 'await' needed here
+            pings.append(self.four.ping)
         if config.STRING5:
-            pings.append(self.five.ping)  # No 'await' needed here
-
-        # The return statement should be properly indented within the async function
+            pings.append(self.five.ping)
         return str(round(sum(pings) / len(pings), 3))
+    
+    
     async def start(self):
         LOGGER(__name__).info("Starting PyTgCalls Client...\n")
         if config.STRING1:
@@ -592,8 +591,8 @@ class Call(PyTgCalls):
         if config.STRING5:
             await self.five.start()
 
+    
     async def decorators(self):
-        
         @self.one.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
         @self.two.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
         @self.three.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
