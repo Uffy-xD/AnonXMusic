@@ -606,17 +606,17 @@ class Call(PyTgCalls):
         @self.three.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
         @self.four.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
         @self.five.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        async def stream_services_handler(_, chat_id: int):
-            await self.stop_stream(chat_id)
+        
             
         @self.one.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
         @self.two.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
         @self.three.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
         @self.four.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
         @self.five.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
-        async def handle_left_group(_, chat_id: int):
-            await self.stream_services_handler(_, chat_id)
+        async def stream_services_handler(_, chat_id: int):
+            await self.stop_stream(chat_id)
 
+        
         @self.one.on_update(filters.stream_end)
         @self.two.on_update(filters.stream_end)
         @self.three.on_update(filters.stream_end)
