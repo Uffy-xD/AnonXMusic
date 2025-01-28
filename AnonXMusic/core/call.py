@@ -564,18 +564,19 @@ class Call(PyTgCalls):
                     db[chat_id][0]["markup"] = "stream"
 
     async def ping(self):
-        pings = []
-        if config.STRING1:
-            pings.append(await self.one.ping)
-        if config.STRING2:
-            pings.append(await self.two.ping)
-        if config.STRING3:
-            pings.append(await self.three.ping)
-        if config.STRING4:
-            pings.append(await self.four.ping)
-        if config.STRING5:
-            pings.append(await self.five.ping)
-        return str(round(sum(pings) / len(pings), 3))
+    pings = []
+    if config.STRING1:
+        pings.append(self.one.ping)  # Remove 'await' here
+    if config.STRING2:
+        pings.append(self.two.ping)  # Remove 'await' here
+    if config.STRING3:
+        pings.append(self.three.ping)  # Remove 'await' here
+    if config.STRING4:
+        pings.append(self.four.ping)  # Remove 'await' here
+    if config.STRING5:
+        pings.append(self.five.ping)  # Remove 'await' here
+    return str(round(sum(pings) / len(pings), 3))
+
 
     async def start(self):
         LOGGER(__name__).info("Starting PyTgCalls Client...\n")
