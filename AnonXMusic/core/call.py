@@ -205,7 +205,7 @@ class Call(PyTgCalls):
             if playing[0]["streamtype"] == "video"
             else MediaStream(
                 out,
-                AudioQuality.HIGH,
+                AudioQuality.STUDIO,
                 ffmpeg_parameters=f"-ss {played} -to {duration}",
                 video_flags=MediaStream.Flags.IGNORE,
             )
