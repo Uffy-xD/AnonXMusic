@@ -635,8 +635,14 @@ class Call(PyTgCalls):
         @self.three.on_update(filters.stream_end)
         @self.four.on_update(filters.stream_end)
         @self.five.on_update(filters.stream_end)
-        async def handle_stream_end(client, update: Update):
-            await self.stream_end_handler(client, update)
+        async def stream_end_handler1(client, update: Update):
+            if not isinstance(update, StreamAudioEnded):
+                return
+
+            chat_id = update.chat_id
+    
+         # This will ensure the bot leaves the voice chat after the stream ends
+         await client.leave_voice_chat(chat_id)
 
 
 Anony = Call()
