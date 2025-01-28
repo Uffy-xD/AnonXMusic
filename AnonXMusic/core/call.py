@@ -592,36 +592,23 @@ class Call(PyTgCalls):
         if config.STRING5:
             await self.five.start()
 
-
-    async def stream_services_handler(self, _, chat_id: int):
-        # This function will handle the necessary stream stopping logic
-        await self.stop_stream(chat_id)
-
-    async def stream_end_handler(self, client, update: Update):
-        if not isinstance(update, StreamAudioEnded):
-            return
-        await self.play(client, update.chat_id)
-
     async def decorators(self):
-        # Using the new event handling system in py-tgcalls v2.0.6
-        # Here we register the handlers using the on_update decorator
-
+        
         @self.one.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
         @self.two.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
         @self.three.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
         @self.four.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
         @self.five.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
-        async def handle_kicked(_, chat_id: int):
-            await self.stream_services_handler(_, chat_id)
+        
 
         @self.one.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
         @self.two.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
         @self.three.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
         @self.four.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
         @self.five.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        async def handle_closed_voice_chat(_, chat_id: int):
-            await self.stream_services_handler(_, chat_id)
-
+        async def stream_services_handler(_, chat_id: int):
+            await self.stop_stream(chat_id)
+            
         @self.one.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
         @self.two.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
         @self.three.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
@@ -638,11 +625,6 @@ class Call(PyTgCalls):
         async def stream_end_handler1(client, update: Update):
             if not isinstance(update, StreamAudioEnded):
                 return
-
-            chat_id = update.chat_id
-    
-         # This will ensure the bot leaves the voice chat after the stream ends
-         await client.leave_voice_chat(chat_id)
-
+            await self.change_stream(client, update.chat_id)
 
 Anony = Call()
