@@ -14,11 +14,11 @@ from ntgcalls import TelegramServerError
 from pytgcalls.types import (
     GroupCallParticipant,
     MediaStream,
-    ChatUpdate, 
+    ChatUpdate,
     Update,
 )
 from pytgcalls.types import (
-    AudioQuality, 
+    AudioQuality,
     VideoQuality,
 )
 from pytgcalls.types.stream import StreamAudioEnded
@@ -48,12 +48,10 @@ from strings import get_string
 autoend = {}
 counter = {}
 
-
 async def _clear_(chat_id):
     db[chat_id] = []
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
-
 
 class Call(PyTgCalls):
     def __init__(self):
@@ -239,13 +237,7 @@ class Call(PyTgCalls):
         except:
             pass
 
-    async def skip_stream(
-        self,
-        chat_id: int,
-        link: str,
-        video: Union[bool, str] = None,
-        image: Union[bool, str] = None,
-    ):
+    async def skip_stream(self, chat_id: int, link: str, video: Union[bool, str] = None, image: Union[bool, str] = None):
         assistant = await group_assistant(self, chat_id)
         if video:
             stream = MediaStream(
@@ -283,23 +275,7 @@ class Call(PyTgCalls):
         )
         await assistant.play(chat_id, stream)
 
-    async def stream_call(self, link):
-        assistant = await group_assistant(self, config.LOGGER_ID)
-        await assistant.play(
-            config.LOGGER_ID,
-            MediaStream(link),
-        )
-        await asyncio.sleep(0.2)
-        await assistant.leave_call(config.LOGGER_ID)
-
-    async def join_call(
-        self,
-        chat_id: int,
-        original_chat_id: int,
-        link,
-        video: Union[bool, str] = None,
-        image: Union[bool, str] = None,
-    ):
+    async def join_call(self, chat_id: int, original_chat_id: int, link, video: Union[bool, str] = None, image: Union[bool, str] = None):
         assistant = await group_assistant(self, chat_id)
         language = await get_lang(chat_id)
         _ = get_string(language)
@@ -484,157 +460,41 @@ class Call(PyTgCalls):
                         video_flags=MediaStream.Flags.IGNORE,
                     )
                 )
-                try:
-                    await client.play(chat_id, stream)
-                except:
-                    return await app.send_message(
-                        original_chat_id,
-                        text=_["call_6"],
-                    )
-                button = stream_markup(_, chat_id)
-                run = await app.send_photo(
-                    chat_id=original_chat_id,
-                    photo=config.STREAM_IMG_URL,
-                    caption=_["stream_2"].format(user),
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-                db[chat_id][0]["mystic"] = run
-                db[chat_id][0]["markup"] = "tg"
-            else:
-                if video:
-                    stream = MediaStream(
-                        queued,
-                        AudioQuality.STUDIO,
-                        VideoQuality.SD_480p,
-                    )
-                else:
-                    stream = MediaStream(
-                        queued,
-                        AudioQuality.STUDIO,
-                        video_flags=MediaStream.Flags.IGNORE,
-                    )
-                try:
-                    await client.play(chat_id, stream)
-                except:
-                    return await app.send_message(
-                        original_chat_id,
-                        text=_["call_6"],
-                    )
-                if videoid == "telegram":
-                    button = stream_markup(_, chat_id)
-                    run = await app.send_photo(
-                        chat_id=original_chat_id,
-                        photo=config.TELEGRAM_AUDIO_URL
-                        if str(streamtype) == "audio"
-                        else config.TELEGRAM_VIDEO_URL,
-                        caption=_["stream_1"].format(
-                            config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
-                        ),
-                        reply_markup=InlineKeyboardMarkup(button),
-                    )
-                    db[chat_id][0]["mystic"] = run
-                    db[chat_id][0]["markup"] = "tg"
-                elif videoid == "soundcloud":
-                    button = stream_markup(_, chat_id)
-                    run = await app.send_photo(
-                        chat_id=original_chat_id,
-                        photo=config.SOUNCLOUD_IMG_URL,
-                        caption=_["stream_1"].format(
-                            config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
-                        ),
-                        reply_markup=InlineKeyboardMarkup(button),
-                    )
-                    db[chat_id][0]["mystic"] = run
-                    db[chat_id][0]["markup"] = "tg"
-                else:
-                    img = await get_thumb(videoid)
-                    button = stream_markup(_, chat_id)
-                    run = await app.send_photo(
-                        chat_id=original_chat_id,
-                        photo=img,
-                        caption=_["stream_1"].format(
-                            f"https://t.me/{app.username}?start=info_{videoid}",
-                            title[:23],
-                            check[0]["dur"],
-                            user,
-                        ),
-                        reply_markup=InlineKeyboardMarkup(button),
-                    )
-                    db[chat_id][0]["mystic"] = run
-                    db[chat_id][0]["markup"] = "stream"
-
-    async def ping(self):
-        pings = []
-        if config.STRING1:
-            pings.append(await self.one.ping)
-        if config.STRING2:
-            pings.append(await self.two.ping)
-        if config.STRING3:
-            pings.append(await self.three.ping)
-        if config.STRING4:
-            pings.append(await self.four.ping)
-        if config.STRING5:
-            pings.append(await self.five.ping)
-        return str(round(sum(pings) / len(pings), 3))
-
-    async def start(self):
-        LOGGER(__name__).info("Starting PyTgCalls Client...\n")
-        if config.STRING1:
-            await self.one.start()
-        if config.STRING2:
-            await self.two.start()
-        if config.STRING3:
-            await self.three.start()
-        if config.STRING4:
-            await self.four.start()
-        if config.STRING5:
-            await self.five.start()
-
-
-    async def stream_services_handler(self, _, chat_id: int):
-        # This function will handle the necessary stream stopping logic
-        await self.stop_stream(chat_id)
+                await client.play(chat_id, stream)
 
     async def stream_end_handler(self, client, update: Update):
         if not isinstance(update, StreamAudioEnded):
             return
-        await self.play(client, update.chat_id)
+        chat_id = update.chat_id
+        await self.change_stream(client, chat_id)
 
     async def decorators(self):
-        # Using the new event handling system in py-tgcalls v2.0.6
-        # Here we register the handlers using the on_update decorator
-
-        @self.one.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
-        @self.two.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
-        @self.three.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
-        @self.four.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
-        @self.five.on_update(filters.chat_update(ChatUpdate.Status.KICKED))
-        async def handle_kicked(_, chat_id: int):
-            await self.stream_services_handler(_, chat_id)
-
-        @self.one.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        @self.two.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        @self.three.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        @self.four.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        @self.five.on_update(filters.chat_update(ChatUpdate.Status.CLOSED_VOICE_CHAT))
-        async def handle_closed_voice_chat(_, chat_id: int):
-            await self.stream_services_handler(_, chat_id)
-
-        @self.one.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
-        @self.two.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
-        @self.three.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
-        @self.four.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
-        @self.five.on_update(filters.chat_update(ChatUpdate.Status.LEFT_GROUP))
-        async def handle_left_group(_, chat_id: int):
-            await self.stream_services_handler(_, chat_id)
-
         @self.one.on_update(filters.stream_end)
-        @self.two.on_update(filters.stream_end)
-        @self.three.on_update(filters.stream_end)
-        @self.four.on_update(filters.stream_end)
-        @self.five.on_update(filters.stream_end)
         async def handle_stream_end(client, update: Update):
             await self.stream_end_handler(client, update)
 
+        @self.two.on_update(filters.stream_end)
+        async def handle_stream_end_2(client, update: Update):
+            await self.stream_end_handler(client, update)
+
+        @self.three.on_update(filters.stream_end)
+        async def handle_stream_end_3(client, update: Update):
+            await self.stream_end_handler(client, update)
+
+        @self.four.on_update(filters.stream_end)
+        async def handle_stream_end_4(client, update: Update):
+            await self.stream_end_handler(client, update)
+
+        @self.five.on_update(filters.stream_end)
+        async def handle_stream_end_5(client, update: Update):
+            await self.stream_end_handler(client, update)
+
+    async def start(self):
+        LOGGER(__name__).info("Starting PyTgCalls Client...\n")
+        await self.one.start()  # Start all clients if necessary
+        await self.two.start()
+        await self.three.start()
+        await self.four.start()
+        await self.five.start()
 
 Anony = Call()
